@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Your Name — Portfolio</title>
-  <meta name="description" content="Portfolio of Your Name." />
+  <title>Benjamin Stevenson — Portfolio</title>
+  <meta name="description" content="Portfolio of Benjamin Stevenson." />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="css/style.css" />
 </head>
@@ -17,6 +17,10 @@
 
   <header class="site-header">
     <nav class="main-nav" id="mainNav">
+      <a href="#home" class="nav-btn magnetic">
+        <span class="nav-btn-label">Home</span>
+        <span class="nav-btn-ext">home.html</span>
+      </a>
       <a href="#about" class="nav-btn magnetic">
         <span class="nav-btn-label">About</span>
         <span class="nav-btn-ext">about.md</span>
@@ -24,10 +28,6 @@
       <a href="#projects" class="nav-btn magnetic">
         <span class="nav-btn-label">Projects</span>
         <span class="nav-btn-ext">projects.js</span>
-      </a>
-      <a href="#skills" class="nav-btn magnetic">
-        <span class="nav-btn-label">Skills</span>
-        <span class="nav-btn-ext">skills.json</span>
       </a>
       <a href="#contact" class="nav-btn magnetic">
         <span class="nav-btn-label">Contact</span>
@@ -47,7 +47,6 @@
     <div class="bg-layer" data-bg="home"><div class="bg-layer-img bg-layer--home"></div></div>
     <div class="bg-layer" data-bg="about"><div class="bg-layer-img bg-layer--about"></div></div>
     <div class="bg-layer" data-bg="projects"><div class="bg-layer-img bg-layer--projects"></div></div>
-    <div class="bg-layer" data-bg="skills"><div class="bg-layer-img bg-layer--skills"></div></div>
     <div class="bg-layer" data-bg="contact"><div class="bg-layer-img bg-layer--contact"></div></div>
   </div>
   <div class="bg-scrim"></div>
@@ -55,11 +54,11 @@
   <main>
     <section class="hero" id="home">
       <div class="hero-content">
-        <p class="hero-eyebrow">Portfolio</p>
-        <h1 class="hero-title">Ben Stevenson</h1>
+        <p class="hero-eyebrow">Hello, I'm Ben</p>
+        <h1 class="hero-title">Benjamin Stevenson</h1>
         <p class="hero-blurb">
           <!-- Replace with your own bio -->
-          Currently senior Computer Science student at the University of Michigan and SWE at eVN inc.
+          Senior Computer Science student at the University of Michigan and SWE at eVN inc.
         </p>
       </div>
 
@@ -88,24 +87,6 @@
         <h2 class="section-title">Projects</h2>
         <div class="projects-grid" id="projectsGrid">
           <p class="section-body">Loading projects…</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="page-section" id="skills">
-      <div class="section-inner">
-        <p class="section-eyebrow">Toolkit</p>
-        <h2 class="section-title">Skills</h2>
-        <p class="section-body">
-          <!-- Replace with your own skills -->
-        </p>
-        <div class="skills-list">
-          <span class="tag">Python</span>
-          <span class="tag">TypeScript</span>
-          <span class="tag">React</span>
-          <span class="tag">Node.js</span>
-          <span class="tag">SQL</span>
-          <span class="tag">Docker</span>
         </div>
       </div>
     </section>
