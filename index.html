@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Name — Portfolio</title>
+  <meta name="description" content="Portfolio of Your Name." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <nav class="main-nav" id="mainNav">
+      <a href="#about" class="nav-btn magnetic">
+        <span class="nav-btn-label">About</span>
+        <span class="nav-btn-ext">about.md</span>
+      </a>
+      <a href="#projects" class="nav-btn magnetic">
+        <span class="nav-btn-label">Projects</span>
+        <span class="nav-btn-ext">projects.js</span>
+      </a>
+      <a href="#skills" class="nav-btn magnetic">
+        <span class="nav-btn-label">Skills</span>
+        <span class="nav-btn-ext">skills.json</span>
+      </a>
+      <a href="#contact" class="nav-btn magnetic">
+        <span class="nav-btn-label">Contact</span>
+        <span class="nav-btn-ext">contact.sh</span>
+      </a>
+    </nav>
+
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <!-- Fixed background stack: one layer per section. js/main.js fades + parallax-shifts
+       each outer .bg-layer as you scroll; the inner .bg-layer-img holds the photo and its
+       slow Ken Burns zoom, so the two motions don't fight over the transform property. -->
+  <div class="bg-stack" aria-hidden="true">
+    <div class="bg-layer" data-bg="home"><div class="bg-layer-img bg-layer--home"></div></div>
+    <div class="bg-layer" data-bg="about"><div class="bg-layer-img bg-layer--about"></div></div>
+    <div class="bg-layer" data-bg="projects"><div class="bg-layer-img bg-layer--projects"></div></div>
+    <div class="bg-layer" data-bg="skills"><div class="bg-layer-img bg-layer--skills"></div></div>
+    <div class="bg-layer" data-bg="contact"><div class="bg-layer-img bg-layer--contact"></div></div>
+  </div>
+  <div class="bg-scrim"></div>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="hero-content">
+        <p class="hero-eyebrow">Portfolio</p>
+        <h1 class="hero-title">Ben Stevenson</h1>
+        <p class="hero-blurb">
+          <!-- Replace with your own bio -->
+          Currently senior Computer Science student at the University of Michigan and SWE at eVN inc.
+        </p>
+      </div>
+
+      <div class="hero-cta">
+        <a href="#projects" class="btn btn-fill magnetic">View Projects</a>
+        <a href="#contact" class="btn btn-line magnetic">Get In Touch</a>
+      </div>
+
+      <div class="scroll-cue" aria-hidden="true"><span></span></div>
+    </section>
+
+    <section class="page-section" id="about">
+      <div class="section-inner">
+        <p class="section-eyebrow">About</p>
+        <h2 class="section-title">Who I Am</h2>
+        <p class="section-body">
+          <!-- Replace with your own about-me copy -->
+          Write a bit about who you are, your background, and what drives you.
+        </p>
+      </div>
+    </section>
+
+    <section class="page-section" id="projects">
+      <div class="section-inner section-inner--wide">
+        <p class="section-eyebrow">Work</p>
+        <h2 class="section-title">Projects</h2>
+        <div class="projects-grid" id="projectsGrid">
+          <p class="section-body">Loading projects…</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="page-section" id="skills">
+      <div class="section-inner">
+        <p class="section-eyebrow">Toolkit</p>
+        <h2 class="section-title">Skills</h2>
+        <p class="section-body">
+          <!-- Replace with your own skills -->
+        </p>
+        <div class="skills-list">
+          <span class="tag">Python</span>
+          <span class="tag">TypeScript</span>
+          <span class="tag">React</span>
+          <span class="tag">Node.js</span>
+          <span class="tag">SQL</span>
+          <span class="tag">Docker</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="page-section" id="contact">
+      <div class="section-inner">
+        <p class="section-eyebrow">Say Hello</p>
+        <h2 class="section-title">Contact</h2>
+        <p class="section-body">
+          <!-- Replace with your own contact blurb -->
+          Open to new opportunities, collaborations, or just a chat.
+        </p>
+        <div class="social-links">
+          <a href="mailto:you@example.com" class="social-link magnetic">Email</a>
+          <a href="https://github.com/yourusername" target="_blank" rel="noopener" class="social-link magnetic">GitHub</a>
+          <a href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener" class="social-link magnetic">LinkedIn</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

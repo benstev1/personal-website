@@ -1,0 +1,16 @@
+[
+  {
+    "name": "Project Name",
+    "description": "A short description of what this project does and the problem it solves.",
+    "tags": ["TypeScript", "React", "Node.js"],
+    "github": "https://github.com/yourusername/project",
+    "live": "https://project.example.com"
+  },
+  {
+    "name": "Another Project",
+    "description": "Description of your second project. Explain the impact or what you learned.",
+    "tags": ["Python", "FastAPI", "PostgreSQL"],
+    "github": "https://github.com/yourusername/project2",
+    "live": null
+  }
+]
