@@ -44,7 +44,6 @@ a {
   align-items: flex-start;
   justify-content: flex-end;
   padding: 1.5rem 2rem;
-  background: linear-gradient(to bottom, rgba(51, 30, 56, 0.7), transparent);
 }
 
 .logo {
@@ -119,62 +118,66 @@ a {
 .nav-toggle.open span:nth-child(2) { opacity: 0; }
 .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-/* Fixed background stack — one layer per section, blended + parallax-shifted on scroll.
-   Each .bg-layer is taller than the viewport and js/main.js translates it, so the slide
-   never exposes an edge; .bg-stack clips it back down to the viewport. */
-.bg-stack {
+/* Tether — a cable running from a fixed top-center anchor down to the
+   spaceman, redrawn every frame by js/main.js so it follows him as he
+   glides and bobs, with a gentle sway to sell the zero-g spacewalk feel. */
+.tether-anchor {
   position: fixed;
-  inset: 0;
-  z-index: -2;
-  overflow: hidden;
-}
-
-.bg-layer {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: -10%;
-  height: 120%;
-  opacity: 0;
-  will-change: transform, opacity;
-}
-
-.bg-layer-img {
-  position: absolute;
-  inset: -6%;
-  background-size: cover;
-  background-position: center;
-  filter: grayscale(1) contrast(1.1);
-  animation: hero-drift 20s ease-in-out infinite alternate;
-}
-
-@keyframes hero-drift {
-  from { transform: scale(1); }
-  to { transform: scale(1.08); }
-}
-
-.bg-layer--home {
-  background-image: url('../public/homepage-background.jpg');
-}
-
-.bg-layer--about {
-  background-image: url('../public/aboutme-background.jpg');
-  background-position: center;
-}
-
-.bg-layer--projects {
-  background-image: url('../public/projects-background.jpg');
-}
-
-.bg-layer--contact {
-  background-image: url('../public/contact-background.jpg');
-}
-
-.bg-scrim {
-  position: fixed;
-  inset: 0;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, 0);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-text);
+  box-shadow: 0 0 8px rgba(244, 232, 193, 0.7);
   z-index: -1;
-  background: rgba(51, 30, 56, 0.6);
+}
+
+.tether-line {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -3;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.tether-line path {
+  fill: none;
+  stroke: var(--color-text);
+  stroke-width: 2;
+  stroke-linecap: round;
+  opacity: 0.55;
+}
+
+/* Spaceman — floats to a new spot per section; js/main.js sets left/top. */
+.spaceman {
+  position: fixed;
+  left: 50%;
+  top: 45%;
+  z-index: -2;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: left 2.5s cubic-bezier(0.65, 0, 0.35, 1), top 2.5s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.spaceman-orient {
+  transition: transform 2.5s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.spaceman-box {
+  display: block;
+  width: 100px;
+  height: auto;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.35));
+  animation: spaceman-float 4s ease-in-out infinite;
+}
+
+@keyframes spaceman-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-16px) rotate(4deg); }
 }
 
 /* Hero */
@@ -200,7 +203,7 @@ a {
   text-align: left;
   opacity: 0;
   transform: translateY(20px);
-  transition: opacity 0.9s ease, transform 0.9s ease;
+  transition: opacity 0.6s cubic-bezier(0.65, 0, 0.35, 1) 0.15s, transform 0.6s cubic-bezier(0.65, 0, 0.35, 1) 0.15s;
 }
 
 body.loaded .hero-content {
@@ -328,7 +331,7 @@ body.loaded .hero-content {
   text-align: center;
   opacity: 0;
   transform: translateY(24px);
-  transition: opacity 0.9s ease, transform 0.9s ease;
+  transition: opacity 0.6s cubic-bezier(0.65, 0, 0.35, 1) 0.15s, transform 0.6s cubic-bezier(0.65, 0, 0.35, 1) 0.15s;
 }
 
 .section-inner.in-view {
@@ -364,6 +367,38 @@ body.loaded .hero-content {
   color: var(--color-text-muted);
   max-width: 600px;
   margin: 0 auto;
+}
+
+/* About */
+.about-grid {
+  display: grid;
+  grid-template-columns: minmax(220px, 340px) 1fr;
+  gap: 3rem;
+  align-items: center;
+  text-align: left;
+}
+
+.about-photo {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed rgba(244, 232, 193, 0.35);
+  border-radius: 6px;
+  background: rgba(244, 232, 193, 0.05);
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+
+.about-text .section-body {
+  margin: 0 0 1rem;
+}
+
+.about-text .section-body:last-child {
+  margin-bottom: 0;
 }
 
 /* Projects */
@@ -463,6 +498,14 @@ body.loaded .hero-content {
   transform: translateY(-2px);
 }
 
+.contact-plaintext {
+  margin-top: 1.5rem;
+  font-family: ui-monospace, 'SFMono-Regular', Consolas, Menlo, monospace;
+  font-size: 0.85rem;
+  line-height: 1.8;
+  color: var(--color-text-muted);
+}
+
 /* Responsive */
 @media (max-width: 760px) {
   .main-nav {
@@ -492,15 +535,27 @@ body.loaded .hero-content {
   .nav-toggle {
     display: flex;
   }
+
+  .about-grid {
+    grid-template-columns: 1fr;
+    text-align: center;
+    justify-items: center;
+  }
+
+  .about-photo {
+    max-width: 260px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .bg-layer-img {
+  .scroll-cue span,
+  .spaceman-box {
     animation: none;
   }
 
-  .scroll-cue span {
-    animation: none;
+  .spaceman,
+  .spaceman-orient {
+    transition: none;
   }
 
   .hero-content,
