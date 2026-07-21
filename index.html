@@ -40,16 +40,18 @@
     </button>
   </header>
 
-  <!-- Fixed background stack: one layer per section. js/main.js fades + parallax-shifts
-       each outer .bg-layer as you scroll; the inner .bg-layer-img holds the photo and its
-       slow Ken Burns zoom, so the two motions don't fight over the transform property. -->
-  <div class="bg-stack" aria-hidden="true">
-    <div class="bg-layer" data-bg="home"><div class="bg-layer-img bg-layer--home"></div></div>
-    <div class="bg-layer" data-bg="about"><div class="bg-layer-img bg-layer--about"></div></div>
-    <div class="bg-layer" data-bg="projects"><div class="bg-layer-img bg-layer--projects"></div></div>
-    <div class="bg-layer" data-bg="contact"><div class="bg-layer-img bg-layer--contact"></div></div>
+  <!-- Floating spaceman character. js/main.js moves it to a different spot
+       as each section scrolls into view. The tether line/anchor simulate a
+       spacewalk cable running from the top of the screen down to him. -->
+  <div class="tether-anchor" aria-hidden="true"></div>
+  <svg class="tether-line" aria-hidden="true">
+    <path id="tetherPath"></path>
+  </svg>
+  <div class="spaceman" id="spaceman" aria-hidden="true">
+    <div class="spaceman-orient" id="spacemanOrient">
+      <img class="spaceman-box" src="public/spaceman.gif" alt="" />
+    </div>
   </div>
-  <div class="bg-scrim"></div>
 
   <main>
     <section class="hero" id="home">
@@ -71,13 +73,23 @@
     </section>
 
     <section class="page-section" id="about">
-      <div class="section-inner">
-        <p class="section-eyebrow">About</p>
-        <h2 class="section-title">Who I Am</h2>
-        <p class="section-body">
-          <!-- Replace with your own about-me copy -->
-          Write a bit about who you are, your background, and what drives you.
-        </p>
+      <div class="section-inner section-inner--wide about-grid">
+        <div class="about-photo" aria-hidden="true">
+          <span>Headshot</span>
+        </div>
+        <div class="about-text">
+          <p class="section-eyebrow">About</p>
+          <h2 class="section-title">Who I Am</h2>
+          <p class="section-body">
+            I am a Computer Science student at the University of Michigan with a strong foundation in software engineering, machine learning, and algorithmic problem-solving. My academic coursework and hands-on experience have equipped me with expertise in data structures, algorithms, and systems programming, along with a passion for applying these skills to real-world challenges.
+          </p>
+          <p class="section-body">
+            Currently, I am a Software Engineering Intern at eVN Inc., where I collaborate with senior developers to design, develop, and optimize software applications. My work spans machine learning, data transfer, and web development, leveraging frameworks like TensorFlow and React.js. I have also contributed to data preprocessing and model evaluation strategies, further strengthening my analytical and problem-solving abilities.
+          </p>
+          <p class="section-body">
+            My technical skills include proficiency in Python, C++, Java, JavaScript, and various web technologies, alongside experience with Git, Docker, and Jira. I am always open to networking, collaboration, and new learning opportunities in software engineering, AI, and data-driven technologies.
+          </p>
+        </div>
       </div>
     </section>
 
@@ -100,10 +112,14 @@
           Open to new opportunities, collaborations, or just a chat.
         </p>
         <div class="social-links">
-          <a href="mailto:you@example.com" class="social-link magnetic">Email</a>
-          <a href="https://github.com/yourusername" target="_blank" rel="noopener" class="social-link magnetic">GitHub</a>
-          <a href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener" class="social-link magnetic">LinkedIn</a>
+          <a href="mailto:benstev@umich.edu" class="social-link magnetic">Email</a>
+          <a href="https://github.com/benstev1" target="_blank" rel="noopener" class="social-link magnetic">GitHub</a>
+          <a href="https://www.linkedin.com/in/benstev/" target="_blank" rel="noopener" class="social-link magnetic">LinkedIn</a>
         </div>
+        <p class="contact-plaintext">
+          benstev@umich.edu<br />
+          (248) 590-6177
+        </p>
       </div>
     </section>
   </main>
