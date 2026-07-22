@@ -64,6 +64,7 @@ function initSectionTransitions() {
 
       if (!entry.isIntersecting) {
         if (inner) inner.classList.remove('in-view');
+        if (spaceman && entry.target.id === 'home') spaceman.classList.remove('draggable');
         return;
       }
 
@@ -82,11 +83,149 @@ function initSectionTransitions() {
         orient.style.transform = `rotate(${spin + pos.rotate}deg)`;
       }
 
+      if (spaceman) spaceman.classList.toggle('draggable', entry.target.id === 'home');
       if (inner) inner.classList.add('in-view');
     });
   }, { threshold: 0.4 });
 
   sections.forEach(section => observer.observe(section));
+}
+
+// Let the user click-and-drag the spaceman around while the home section is
+// in view (initSectionTransitions toggles the .draggable class, which is
+// what actually enables pointer-events and raises his z-index above the
+// page — otherwise the home section's own content sits above him and
+// swallows every click before it reaches him). On release he sits for a
+// moment where dropped, then spins back to his resting spot.
+function initSpacemanDrag() {
+  const spaceman = document.getElementById('spaceman');
+  const orient = document.getElementById('spacemanOrient');
+  if (!spaceman || !orient) return;
+
+  const homePos = SPACEMAN_POSITIONS.home;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const dragMargin = 40;
+  const spinSpeed = 130; // degrees per second while actively held
+  const coastDuration = 900; // ms to ease the spin down to a stop after release
+
+  let dragging = false;
+  let offsetX = 0;
+  let offsetY = 0;
+  let returnTimer = null;
+  let returnSpins = 0;
+
+  // The spin during a drag is driven frame-by-frame (rather than a CSS
+  // animation) specifically so release can ease the speed down to zero
+  // instead of cutting off instantly — a CSS animation has no way to
+  // decelerate on its way out.
+  let spinAngle = 0;
+  let spinRafId = null;
+  let spinLastTime = null;
+  let coastStart = null;
+  let coastFromSpeed = 0;
+
+  function clearReturnTimer() {
+    if (!returnTimer) return;
+    clearTimeout(returnTimer);
+    returnTimer = null;
+  }
+
+  function scheduleReturn() {
+    clearReturnTimer();
+    returnTimer = setTimeout(() => {
+      returnSpins += 1;
+      const spin = reduceMotion ? 0 : returnSpins * 360;
+      spaceman.style.left = homePos.left;
+      spaceman.style.top = homePos.top;
+      orient.style.transform = `rotate(${spin + homePos.rotate}deg)`;
+      returnTimer = null;
+    }, 600);
+  }
+
+  function spinTick(time) {
+    if (spinLastTime === null) spinLastTime = time;
+    const dt = (time - spinLastTime) / 1000;
+    spinLastTime = time;
+
+    let speed;
+    if (dragging) {
+      speed = spinSpeed;
+    } else {
+      if (coastStart === null) {
+        coastStart = time;
+        coastFromSpeed = spinSpeed;
+      }
+      const t = Math.min((time - coastStart) / coastDuration, 1);
+      speed = coastFromSpeed * (1 - Math.pow(1 - t, 3)); // ease-out cubic
+
+      if (t >= 1) {
+        spinRafId = null;
+        spinLastTime = null;
+        coastStart = null;
+        spaceman.classList.remove('spinning');
+        scheduleReturn();
+        return;
+      }
+    }
+
+    spinAngle += speed * dt;
+    orient.style.transform = `rotate(${spinAngle}deg)`;
+    spinRafId = requestAnimationFrame(spinTick);
+  }
+
+  function startSpin() {
+    if (reduceMotion || spinRafId) return;
+    spaceman.classList.add('spinning');
+    spinLastTime = null;
+    coastStart = null;
+    spinRafId = requestAnimationFrame(spinTick);
+  }
+
+  spaceman.addEventListener('pointerdown', e => {
+    if (!spaceman.classList.contains('draggable')) return;
+
+    dragging = true;
+    clearReturnTimer();
+    spaceman.classList.add('dragging');
+    startSpin();
+
+    const rect = spaceman.getBoundingClientRect();
+    offsetX = e.clientX - (rect.left + rect.width / 2);
+    offsetY = e.clientY - (rect.top + rect.height / 2);
+
+    try {
+      spaceman.setPointerCapture(e.pointerId);
+    } catch (err) {
+      // Capture is a nice-to-have for tracking outside the element's
+      // bounds; if it's unavailable for some reason, dragging still works
+      // as long as the cursor stays over the moving element.
+    }
+  });
+
+  spaceman.addEventListener('pointermove', e => {
+    if (!dragging) return;
+
+    const x = Math.min(Math.max(e.clientX - offsetX, dragMargin), window.innerWidth - dragMargin);
+    const y = Math.min(Math.max(e.clientY - offsetY, dragMargin), window.innerHeight - dragMargin);
+    spaceman.style.left = `${x}px`;
+    spaceman.style.top = `${y}px`;
+  });
+
+  function endDrag(e) {
+    if (!dragging) return;
+    dragging = false;
+    spaceman.classList.remove('dragging');
+    if (spaceman.hasPointerCapture(e.pointerId)) {
+      spaceman.releasePointerCapture(e.pointerId);
+    }
+    // If reduced motion skipped the spin loop entirely, go straight to the
+    // return; otherwise the coasting phase inside spinTick will call
+    // scheduleReturn() itself once it eases to a stop.
+    if (!spinRafId) scheduleReturn();
+  }
+
+  spaceman.addEventListener('pointerup', endDrag);
+  spaceman.addEventListener('pointercancel', endDrag);
 }
 
 // Draw a tether line from the fixed top-center anchor down to the spaceman
@@ -194,6 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initMagnetic();
   initNavToggle();
   initSectionTransitions();
+  initSpacemanDrag();
   initTether();
   loadProjects();
 });

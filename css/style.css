@@ -158,7 +158,11 @@ a {
   opacity: 0.55;
 }
 
-/* Spaceman — floats to a new spot per section; js/main.js sets left/top. */
+/* Spaceman — floats to a new spot per section; js/main.js sets left/top.
+   Sized generously larger than the image itself (which is only ~100px)
+   and centered via flexbox, so the click/drag area — which lives on this
+   outer element — comfortably covers the full range of the idle float
+   animation's translateY/rotate instead of just his resting position. */
 .spaceman {
   position: fixed;
   left: 50%;
@@ -167,10 +171,57 @@ a {
   pointer-events: none;
   transform: translate(-50%, -50%);
   transition: left 2.5s cubic-bezier(0.65, 0, 0.35, 1), top 2.5s cubic-bezier(0.65, 0, 0.35, 1);
+  width: 140px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Only draggable while the home section is in view (js/main.js toggles
+   this); pointer-events stay off everywhere else. He normally sits behind
+   all page content (z-index -2), which also means the page content in
+   front of him would otherwise swallow every click before it reaches him —
+   so pull him back above it while this class is active. */
+.spaceman.draggable {
+  z-index: 60;
+  pointer-events: auto;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.spaceman.draggable .spaceman-box {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+.spaceman.dragging {
+  cursor: grabbing;
+  transition: none;
+}
+
+.spaceman.dragging .spaceman-box {
+  animation-play-state: paused;
+}
+
+/* Set on pointerdown, removed once the post-release coast-to-a-stop
+   finishes (see js/main.js). Disables the transition below so the per-frame
+   rotate() updates during the drag/coast aren't fighting a 2.5s transition
+   meant for the discrete section-to-section and return-home spins. */
+.spaceman.spinning .spaceman-orient {
+  transition: none;
 }
 
 .spaceman-orient {
   transition: transform 2.5s cubic-bezier(0.65, 0, 0.35, 1);
+  /* The idle float animation only bobs upward (translateY goes to -16px,
+     never positive), so centering this dead-center in .spaceman would put
+     the hitbox's "extra" room mostly where he never visually is. This
+     margin biases the flex-centering to give more headroom above (where
+     the bob actually happens) and less below. */
+  margin-top: 70px;
 }
 
 .spaceman-box {
