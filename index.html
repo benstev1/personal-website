@@ -25,9 +25,17 @@
         <span class="nav-btn-label">About</span>
         <span class="nav-btn-ext">about.md</span>
       </a>
+      <a href="#ci-healer" class="nav-btn magnetic">
+        <span class="nav-btn-label">CI Healer</span>
+        <span class="nav-btn-ext">healer.py</span>
+      </a>
+      <a href="#open-source" class="nav-btn magnetic">
+        <span class="nav-btn-label">Open Source</span>
+        <span class="nav-btn-ext">sylt.id3</span>
+      </a>
       <a href="#projects" class="nav-btn magnetic">
         <span class="nav-btn-label">Projects</span>
-        <span class="nav-btn-ext">projects.js</span>
+        <span class="nav-btn-ext">projects.py</span>
       </a>
       <a href="#contact" class="nav-btn magnetic">
         <span class="nav-btn-label">Contact</span>
@@ -73,32 +81,229 @@
     </section>
 
     <section class="page-section" id="about">
-      <div class="section-inner section-inner--wide about-grid">
-        <div class="about-photo">
-          <img src="public/headshot.JPG" alt="Photo of Benjamin Stevenson" />
-        </div>
-        <div class="about-text">
-          <p class="section-eyebrow">About</p>
-          <h2 class="section-title">Who I Am</h2>
-          <p class="section-body">
-            I am a Computer Science student at the University of Michigan with a strong foundation in software engineering, machine learning, and algorithmic problem-solving. My academic coursework and hands-on experience have equipped me with expertise in data structures, algorithms, and systems programming, along with a passion for applying these skills to real-world challenges.
-          </p>
-          <p class="section-body">
-            Currently, I am a Software Engineering Intern at eVN Inc., where I collaborate with senior developers to design, develop, and optimize software applications. My work spans machine learning, data transfer, and web development, leveraging frameworks like TensorFlow and React.js. I have also contributed to data preprocessing and model evaluation strategies, further strengthening my analytical and problem-solving abilities.
-          </p>
-          <p class="section-body">
-            My technical skills include proficiency in Python, C++, Java, JavaScript, and various web technologies, alongside experience with Git, Docker, and Jira. I am always open to networking, collaboration, and new learning opportunities in software engineering, AI, and data-driven technologies.
-          </p>
+      <div class="section-inner section-inner--wide">
+        <div class="about-grid">
+          <div class="about-photo">
+            <img src="public/headshot.JPG" alt="Photo of Benjamin Stevenson" />
+          </div>
+          <div class="about-text">
+            <p class="section-eyebrow">About</p>
+            <h2 class="section-title">Who I Am</h2>
+            <p class="section-body">
+              I am a Computer Science student at the University of Michigan (August 2023 – May 2027) with a strong foundation in software engineering, machine learning, and algorithmic problem-solving. My academic coursework and hands-on experience have equipped me with expertise in data structures, algorithms, and systems programming, along with a passion for applying these skills to real-world challenges.
+            </p>
+            <p class="section-body">
+              Since June 2024, I have been a Software Engineering Intern at eVN Inc., where I collaborate with senior developers to design, develop, and optimize software applications. My work spans machine learning, data transfer, and web development, leveraging frameworks like TensorFlow and React.js. I have also contributed to data preprocessing and model evaluation strategies, further strengthening my analytical and problem-solving abilities.
+            </p>
+            <p class="section-body">
+              My technical skills include proficiency in Python, C++, Java, JavaScript, and various web technologies, alongside experience with Git, Docker, and Jira. I am always open to networking, collaboration, and new learning opportunities in software engineering, AI, and data-driven technologies.
+            </p>
+          </div>
         </div>
       </div>
     </section>
 
+    <!-- ═══════════════════════════ CI HEALER FEATURED SECTION -->
+    <section class="page-section" id="ci-healer">
+      <div class="section-inner section-inner--wide">
+        <p class="section-eyebrow">Featured Project</p>
+        <h2 class="section-title">Self&#8209;Healing CI</h2>
+
+        <div class="ci-intro">
+          <p class="ci-body">
+            A webhook server that detects failed GitHub Actions runs and fixes them
+            automatically — running Ruff &amp; Black for style issues and asking Claude
+            to suggest patches for real bugs. Comment <code class="ci-code">/heal</code>
+            on a PR to apply the AI fix in one click.
+          </p>
+          <div class="ci-meta-row">
+            <div class="project-tags">
+              <span class="tag">Python</span>
+              <span class="tag">FastAPI</span>
+              <span class="tag">GitHub Actions</span>
+              <span class="tag">Claude API</span>
+              <span class="tag">Webhooks</span>
+            </div>
+            <a class="btn btn-line magnetic ci-github-btn"
+               href="https://github.com/benstev1/SH-CI-Pipeline"
+               target="_blank" rel="noopener">GitHub ↗</a>
+          </div>
+        </div>
+
+        <!-- Animated pipeline diagram -->
+        <div class="pipeline" id="ciPipeline" aria-hidden="true">
+          <div class="pipeline-node" id="pn-push">
+            <div class="pn-icon">↑</div>
+            <div class="pn-label">Git Push</div>
+          </div>
+          <div class="pipeline-connector"><div class="pipeline-dot"></div></div>
+          <div class="pipeline-node" id="pn-ci">
+            <div class="pn-icon">▶</div>
+            <div class="pn-label">CI Run</div>
+          </div>
+          <div class="pipeline-connector"><div class="pipeline-dot"></div></div>
+          <div class="pipeline-node pipeline-node--fail" id="pn-fail">
+            <div class="pn-icon">✕</div>
+            <div class="pn-label">Failed</div>
+          </div>
+          <div class="pipeline-connector"><div class="pipeline-dot"></div></div>
+          <div class="pipeline-node" id="pn-hook">
+            <div class="pn-icon">⚡</div>
+            <div class="pn-label">Webhook</div>
+          </div>
+          <div class="pipeline-connector"><div class="pipeline-dot"></div></div>
+          <div class="pipeline-node pipeline-node--heal" id="pn-heal">
+            <div class="pn-icon">◈</div>
+            <div class="pn-label">AI Healer</div>
+          </div>
+          <div class="pipeline-connector"><div class="pipeline-dot"></div></div>
+          <div class="pipeline-node pipeline-node--pass" id="pn-pass">
+            <div class="pn-icon">✓</div>
+            <div class="pn-label">CI Pass</div>
+          </div>
+        </div>
+
+        <!-- Live "last heal" widget -->
+        <div class="heal-widget">
+          <div class="heal-widget-header">
+            <span class="heal-widget-eyebrow">// latest heal</span>
+            <span class="heal-widget-meta" id="healMeta">fetching…</span>
+          </div>
+          <div class="heal-widget-body" id="healBody">
+            <span class="heal-loading">connecting to github api…</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════ OPEN SOURCE SECTION -->
+    <section class="page-section" id="open-source">
+      <div class="section-inner section-inner--wide">
+        <p class="section-eyebrow">Open Source</p>
+        <h2 class="section-title">Synced Lyrics for Beets</h2>
+
+        <p class="section-body oss-intro">
+          Contributed synchronized (LRC) lyrics support to
+          <a href="https://github.com/beetbox/beets" target="_blank" rel="noopener" class="oss-inline-link">beets</a>,
+          a music library manager with 15k+ GitHub stars. Partway through review, a
+          maintainer pointed out the fix really belonged one layer down — in
+          <a href="https://github.com/beetbox/mediafile" target="_blank" rel="noopener" class="oss-inline-link">mediafile</a>,
+          the tagging library beets depends on, which had no synchronized-lyrics field
+          to hook into at all. So that became its own PR first, and the original beets
+          PR was rebuilt on top of it once it merged.
+        </p>
+
+        <div class="oss-cards">
+          <div class="oss-card">
+            <div class="oss-card-header">
+              <span class="oss-card-repo">beetbox/mediafile</span>
+              <span class="oss-card-badge">Merged · prerequisite</span>
+            </div>
+            <h3 class="oss-card-title">storage: add MP3SYLTStorageStyle for SYLT synchronized lyrics</h3>
+            <p class="oss-card-desc">
+              Added a new <code class="ci-code">synced_lyrics</code> field and storage
+              class so MediaFile can read and write the ID3v2 SYLT frame at all —
+              nothing existed to build on before this.
+            </p>
+            <div class="oss-card-stats">
+              <span class="oss-stat-add">+127</span>
+              <span class="oss-stat-del">−0</span>
+              <span>6 files</span>
+              <span>PR #108</span>
+            </div>
+            <a href="https://github.com/beetbox/mediafile/pull/108" target="_blank" rel="noopener" class="btn btn-line magnetic">View PR ↗</a>
+          </div>
+
+          <div class="oss-card">
+            <div class="oss-card-header">
+              <span class="oss-card-repo">beetbox/beets</span>
+              <span class="oss-card-badge">Merged</span>
+            </div>
+            <h3 class="oss-card-title">lyrics: write synced LRC lyrics to SYLT ID3 frame</h3>
+            <p class="oss-card-desc">
+              Fixes <a href="https://github.com/beetbox/beets/issues/6541" target="_blank" rel="noopener" class="oss-inline-link">#6541</a>
+              — the lyrics plugin now stores timestamped lyrics in the proper SYLT
+              frame instead of dumping raw LRC text into USLT.
+            </p>
+            <div class="oss-card-stats">
+              <span class="oss-stat-add">+155</span>
+              <span class="oss-stat-del">−3</span>
+              <span>7 files</span>
+              <span>PR #6566</span>
+            </div>
+            <a href="https://github.com/beetbox/beets/pull/6566" target="_blank" rel="noopener" class="btn btn-fill magnetic">View PR ↗</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════ PROJECTS SECTION -->
     <section class="page-section" id="projects">
       <div class="section-inner section-inner--wide">
-        <p class="section-eyebrow">Work</p>
-        <h2 class="section-title">Projects</h2>
-        <div class="projects-grid" id="projectsGrid">
-          <p class="section-body">Loading projects…</p>
+        <p class="section-eyebrow">Coursework &amp; Work</p>
+        <h2 class="section-title">Additional Projects</h2>
+
+        <div class="projects-grid">
+          <div class="project-card">
+            <div class="project-card-header">
+              <h3 class="project-card-title">ML for Camera Parameter Estimation</h3>
+              <span class="project-card-date">Aug 2024</span>
+            </div>
+            <p class="project-card-desc">
+              Built an image-processing pipeline to clean and normalize raw photo
+              data, then trained a TensorFlow model to estimate camera parameters —
+              lens focal length, subject distance, camera angle — directly from an
+              image. Used the trained model to reconstruct photographic metadata for
+              deeper image analysis.
+            </p>
+            <div class="project-tags">
+              <span class="tag">Python</span>
+              <span class="tag">TensorFlow</span>
+              <span class="tag">Machine Learning</span>
+            </div>
+          </div>
+
+          <div class="project-card">
+            <div class="project-card-header">
+              <h3 class="project-card-title">Photography Submission App</h3>
+              <span class="project-card-date">Feb 2025</span>
+            </div>
+            <p class="project-card-desc">
+              Built a photo submission platform that routes user uploads into Asana
+              task workflows, with a Flask backend and React frontend. Optimized task
+              search and data handling to cut latency, and implemented end-to-end
+              authentication using secure, one-time nonce tokens.
+            </p>
+            <div class="project-tags">
+              <span class="tag">React</span>
+              <span class="tag">Flask</span>
+              <span class="tag">Asana API</span>
+            </div>
+          </div>
+
+          <div class="project-card">
+            <div class="project-card-header">
+              <h3 class="project-card-title">Fakebook: Relational DB &amp; Analytics</h3>
+              <span class="project-card-date">Oct – Nov 2025</span>
+            </div>
+            <p class="project-card-desc">
+              Designed an ER model and normalized relational schema for a large-scale
+              social platform (users, photos, messages, events), then wrote the SQL
+              DDL to create, constrain, and index the core tables and validated
+              integrity against a loaded public dataset. Followed up by exporting the
+              same data into MongoDB — modeling users, friendships, and cities as
+              nested documents — and building aggregation pipelines to answer real
+              analytics questions like city cohorts, friend statistics, and
+              matchmaker pairs.
+            </p>
+            <div class="project-tags">
+              <span class="tag">SQL</span>
+              <span class="tag">Oracle</span>
+              <span class="tag">MongoDB</span>
+              <span class="tag">NoSQL</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>

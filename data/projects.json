@@ -1,16 +1,9 @@
 [
   {
-    "name": "Project Name",
-    "description": "A short description of what this project does and the problem it solves.",
-    "tags": ["TypeScript", "React", "Node.js"],
-    "github": "https://github.com/yourusername/project",
-    "live": "https://project.example.com"
-  },
-  {
-    "name": "Another Project",
-    "description": "Description of your second project. Explain the impact or what you learned.",
-    "tags": ["Python", "FastAPI", "PostgreSQL"],
-    "github": "https://github.com/yourusername/project2",
-    "live": null
+    "name": "Self-Healing CI Pipeline",
+    "description": "Webhook server that detects failed GitHub Actions runs and fixes them automatically using Ruff, Black, and Claude AI. Comment /heal on a PR to apply the AI-suggested patch.",
+    "tags": ["Python", "FastAPI", "GitHub Actions", "Claude API"],
+    "github": "https://github.com/benstev1/SH-CI-Pipeline",
+    "section": "ci-healer"
   }
 ]

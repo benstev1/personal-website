@@ -45,6 +45,8 @@ function initNavToggle() {
 const SPACEMAN_POSITIONS = {
   home: { left: '50%', top: '45%', rotate: 0 },
   about: { left: '12%', top: '22%', rotate: -25 },
+  'ci-healer': { left: '85%', top: '20%', rotate: 15 },
+  'open-source': { left: '12%', top: '20%', rotate: -18 },
   projects: { left: '12%', top: '78%', rotate: 20 },
   contact: { left: '85%', top: '75%', rotate: -15 },
 };
@@ -299,33 +301,139 @@ function initTether() {
   requestAnimationFrame(update);
 }
 
-// Load and render projects from data/projects.json
-async function loadProjects() {
-  const grid = document.getElementById('projectsGrid');
-  if (!grid) return;
+// Animated pipeline diagram for the CI Healer section
+function initPipeline() {
+  const section = document.getElementById('ci-healer');
+  if (!section) return;
+
+  const nodes = Array.from(section.querySelectorAll('.pipeline-node'));
+  const dots = Array.from(section.querySelectorAll('.pipeline-dot'));
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (reduceMotion) {
+    nodes.forEach(n => n.classList.add('pn-active'));
+    return;
+  }
+
+  // When each node lights up (ms into cycle). The 1500ms pause at FAILED
+  // gives recruiters a moment to register "oh, it broke" before the fix fires.
+  const NODE_TIMES = [0, 1000, 2000, 3500, 4500, 5500];
+  // Duration each traveling dot takes to cross its connector
+  const DOT_DURATIONS = [950, 950, 1400, 950, 950];
+  const CYCLE = 9500;
+  let timers = [];
+
+  function clearTimers() { timers.forEach(clearTimeout); timers = []; }
+
+  function animateDot(dot, duration) {
+    if (!dot) return;
+    const width = dot.parentElement.offsetWidth;
+    dot.style.transition = 'none';
+    dot.style.left = '0px';
+    dot.style.opacity = '1';
+    dot.getBoundingClientRect(); // force reflow so next transition fires
+    dot.style.transition = `left ${duration}ms linear`;
+    dot.style.left = `${width}px`;
+    // Fade out first, then snap position — avoids the visible teleport that
+    // occurs when left resets while the dot is still partially visible.
+    const fadeTimer = setTimeout(() => {
+      dot.style.transition = 'opacity 0.15s';
+      dot.style.opacity = '0';
+      const resetTimer = setTimeout(() => {
+        dot.style.transition = 'none';
+        dot.style.left = '0px';
+      }, 160);
+      timers.push(resetTimer);
+    }, duration - 60);
+    timers.push(fadeTimer);
+  }
+
+  function runCycle() {
+    clearTimers();
+    nodes.forEach(n => n.classList.remove('pn-active'));
+    dots.forEach(d => { d.style.transition = 'none'; d.style.left = '0px'; d.style.opacity = '0'; });
+
+    NODE_TIMES.forEach((t, i) => {
+      const timer = setTimeout(() => {
+        nodes[i]?.classList.add('pn-active');
+        if (i < dots.length) animateDot(dots[i], DOT_DURATIONS[i]);
+      }, t);
+      timers.push(timer);
+    });
+
+    const dimTimer = setTimeout(() => nodes.forEach(n => n.classList.remove('pn-active')), 7800);
+    timers.push(dimTimer);
+  }
+
+  // Only animate once the section scrolls into view — avoids wasting cycles
+  const pipelineObserver = new IntersectionObserver(entries => {
+    if (!entries[0].isIntersecting) return;
+    runCycle();
+    setInterval(runCycle, CYCLE);
+    pipelineObserver.disconnect();
+  }, { threshold: 0.25 });
+  pipelineObserver.observe(section);
+}
+
+// Fetch the most recent AI suggestion comment from the CI repo and display it
+async function loadLastHeal() {
+  const meta = document.getElementById('healMeta');
+  const body = document.getElementById('healBody');
+  if (!meta || !body) return;
 
   try {
-    const res = await fetch('data/projects.json');
-    const projects = await res.json();
+    const res = await fetch(
+      'https://api.github.com/repos/benstev1/SH-CI-Pipeline/issues/comments?per_page=100&sort=created&direction=desc',
+      { headers: { Accept: 'application/vnd.github+json' } }
+    );
+    if (!res.ok) throw new Error(`GitHub ${res.status}`);
+    const comments = await res.json();
 
-    grid.innerHTML = projects.map(p => `
-      <div class="project-card">
-        <div class="project-header">
-          <span class="project-name">${p.name}</span>
-          <div class="project-links">
-            ${p.github ? `<a href="${p.github}" target="_blank" rel="noopener">GitHub ↗</a>` : ''}
-            ${p.live ? `<a href="${p.live}" target="_blank" rel="noopener">Live ↗</a>` : ''}
-          </div>
-        </div>
-        <p class="project-desc">${p.description}</p>
-        <div class="project-tags">
-          ${p.tags.map(t => `<span class="tag">${t}</span>`).join('')}
-        </div>
-      </div>
-    `).join('');
-  } catch (err) {
-    grid.innerHTML = '<p class="section-body">Could not load projects.</p>';
+    const suggestion = comments.find(c => c.body && c.body.includes('AI Suggestion'));
+    if (!suggestion) {
+      meta.textContent = 'no heals yet';
+      body.innerHTML = '<span class="heal-error">No heals recorded yet — trigger a CI failure and run /heal.</span>';
+      return;
+    }
+
+    const prMatch = suggestion.html_url.match(/pull\/(\d+)/);
+    meta.textContent = (prMatch ? `PR #${prMatch[1]} · ` : '') + timeAgo(new Date(suggestion.created_at));
+
+    const diffMatch = suggestion.body.match(/```diff\n([\s\S]*?)```/);
+    if (diffMatch) {
+      const lines = diffMatch[1].trim().split('\n');
+      const html = lines.map(line => {
+        let cls = 'heal-diff-line--ctx';
+        if (line.startsWith('+++') || line.startsWith('---') || line.startsWith('@@')) cls = 'heal-diff-line--meta';
+        else if (line.startsWith('+')) cls = 'heal-diff-line--add';
+        else if (line.startsWith('-')) cls = 'heal-diff-line--del';
+        return `<span class="heal-diff-line ${cls}">${escapeHtml(line)}</span>`;
+      }).join('\n');
+      body.innerHTML = `
+        <div class="heal-diff">${html}</div>
+        <div class="heal-footer">
+          <span class="heal-footer-pass">✓</span>
+          <span>ci: apply AI-suggested fix [skip ci]</span>
+        </div>`;
+    } else {
+      body.innerHTML = `<span class="heal-error">Suggestion posted (no diff block found).</span>`;
+    }
+  } catch (_err) {
+    meta.textContent = 'github offline';
+    body.innerHTML = '<span class="heal-error">Could not reach GitHub API.</span>';
   }
+}
+
+function timeAgo(date) {
+  const s = (Date.now() - date.getTime()) / 1000;
+  if (s < 60) return 'just now';
+  if (s < 3600) return `${Math.floor(s / 60)}m ago`;
+  if (s < 86400) return `${Math.floor(s / 3600)}h ago`;
+  return `${Math.floor(s / 86400)}d ago`;
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -335,5 +443,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initSectionTransitions();
   initSpacemanDrag();
   initTether();
-  loadProjects();
+  initPipeline();
+  loadLastHeal();
 });

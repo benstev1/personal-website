@@ -50,6 +50,15 @@ a {
   align-items: flex-start;
   justify-content: flex-end;
   padding: 1.5rem 2rem;
+  /* The header is transparent and tall (nav stacks vertically), so it would
+     swallow clicks on page content behind it. Pass events through the container
+     and restore them only on the actual interactive children. */
+  pointer-events: none;
+}
+
+.main-nav,
+.nav-toggle {
+  pointer-events: auto;
 }
 
 .logo {
@@ -458,64 +467,7 @@ body.loaded .hero-content {
   margin-bottom: 0;
 }
 
-/* Projects */
-.projects-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1.5rem;
-  margin-top: 2.5rem;
-  text-align: left;
-}
-
-.project-card {
-  background: rgba(51, 30, 56, 0.55);
-  border: 1px solid rgba(244, 232, 193, 0.15);
-  border-radius: 4px;
-  padding: 1.5rem;
-  backdrop-filter: blur(6px);
-  transition: border-color 0.3s ease, transform 0.3s ease;
-}
-
-.project-card:hover {
-  border-color: var(--color-accent);
-  transform: translateY(-4px);
-}
-
-.project-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 0.5rem;
-  margin-bottom: 0.75rem;
-}
-
-.project-name {
-  font-weight: 400;
-  font-size: 1.05rem;
-  color: var(--color-text);
-}
-
-.project-links {
-  display: flex;
-  gap: 0.75rem;
-}
-
-.project-links a {
-  color: var(--color-text-muted);
-  font-size: 0.85rem;
-  transition: color 0.3s ease;
-}
-
-.project-links a:hover {
-  color: var(--color-text);
-}
-
-.project-desc {
-  color: var(--color-text-muted);
-  font-size: 0.9rem;
-  margin-bottom: 1.25rem;
-}
-
+/* Tag chips — used by the CI Healer and Open Source sections */
 .project-tags {
   display: flex;
   flex-wrap: wrap;
@@ -627,4 +579,400 @@ body.loaded .hero-content {
     opacity: 1;
     transform: none;
   }
+}
+
+/* ═══════════════════════════════════════════ CI HEALER SECTION */
+
+.ci-intro {
+  text-align: left;
+  margin-bottom: 2rem;
+}
+
+.ci-body {
+  font-family: ui-monospace, 'SFMono-Regular', Consolas, Menlo, monospace;
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--color-text-muted);
+  max-width: 680px;
+  margin-bottom: 1.25rem;
+}
+
+.ci-code {
+  font-family: ui-monospace, 'SFMono-Regular', Consolas, Menlo, monospace;
+  font-size: 0.88rem;
+  background: rgba(112, 105, 147, 0.15);
+  border: 1px solid rgba(112, 105, 147, 0.35);
+  border-radius: 3px;
+  padding: 0.05em 0.4em;
+  color: var(--color-text);
+}
+
+.ci-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.ci-github-btn {
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  padding: 0.45rem 1rem;
+}
+
+/* ─── Pipeline diagram ─────────────────────────────────────────── */
+
+.pipeline {
+  display: flex;
+  align-items: center;
+  margin: 2.5rem 0 2rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  gap: 0;
+}
+
+.pipeline-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.8rem 1.1rem;
+  background: rgba(51, 30, 56, 0.55);
+  border: 1px solid rgba(244, 232, 193, 0.1);
+  border-radius: 4px;
+  backdrop-filter: blur(6px);
+  transition: border-color 0.45s ease, box-shadow 0.45s ease;
+  flex-shrink: 0;
+  min-width: 84px;
+}
+
+.pn-icon {
+  font-family: ui-monospace, 'SFMono-Regular', Consolas, Menlo, monospace;
+  font-size: 1.15rem;
+  color: rgba(244, 232, 193, 0.2);
+  transition: color 0.45s ease;
+  line-height: 1;
+}
+
+.pn-label {
+  font-family: ui-monospace, 'SFMono-Regular', Consolas, Menlo, monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(244, 232, 193, 0.2);
+  transition: color 0.45s ease;
+  white-space: nowrap;
+}
+
+/* Active — default accent */
+.pipeline-node.pn-active {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 14px rgba(112, 105, 147, 0.3);
+}
+.pipeline-node.pn-active .pn-icon,
+.pipeline-node.pn-active .pn-label {
+  color: var(--color-text);
+}
+
+/* Active — failure (red) */
+.pipeline-node--fail.pn-active {
+  border-color: rgba(210, 85, 85, 0.7);
+  box-shadow: 0 0 14px rgba(210, 85, 85, 0.2);
+}
+.pipeline-node--fail.pn-active .pn-icon,
+.pipeline-node--fail.pn-active .pn-label {
+  color: rgba(230, 110, 110, 0.95);
+}
+
+/* Active — AI heal (stronger glow) */
+.pipeline-node--heal.pn-active {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 22px rgba(112, 105, 147, 0.45);
+}
+
+/* Active — pass (green) */
+.pipeline-node--pass.pn-active {
+  border-color: rgba(75, 185, 130, 0.7);
+  box-shadow: 0 0 14px rgba(75, 185, 130, 0.2);
+}
+.pipeline-node--pass.pn-active .pn-icon,
+.pipeline-node--pass.pn-active .pn-label {
+  color: rgba(100, 210, 150, 0.95);
+}
+
+/* Connector line + traveling dot */
+.pipeline-connector {
+  flex: 1;
+  min-width: 20px;
+  position: relative;
+  height: 1px;
+  background: rgba(244, 232, 193, 0.1);
+}
+
+.pipeline-dot {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  box-shadow: 0 0 8px var(--color-accent);
+  opacity: 0;
+}
+
+/* ─── Heal widget ──────────────────────────────────────────────── */
+
+.heal-widget {
+  background: rgba(51, 30, 56, 0.55);
+  border: 1px solid rgba(244, 232, 193, 0.15);
+  border-radius: 4px;
+  backdrop-filter: blur(6px);
+  overflow: hidden;
+  text-align: left;
+}
+
+.heal-widget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.7rem 1.25rem;
+  border-bottom: 1px solid rgba(244, 232, 193, 0.08);
+  gap: 1rem;
+}
+
+.heal-widget-eyebrow {
+  font-family: ui-monospace, 'SFMono-Regular', Consolas, Menlo, monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  color: var(--color-accent);
+}
+
+.heal-widget-meta {
+  font-family: ui-monospace, 'SFMono-Regular', Consolas, Menlo, monospace;
+  font-size: 0.68rem;
+  color: rgba(244, 232, 193, 0.35);
+  white-space: nowrap;
+}
+
+.heal-widget-body {
+  padding: 1.1rem 1.25rem;
+}
+
+.heal-loading {
+  font-family: ui-monospace, 'SFMono-Regular', Consolas, Menlo, monospace;
+  font-size: 0.75rem;
+  color: rgba(244, 232, 193, 0.25);
+}
+
+.heal-diff {
+  font-family: ui-monospace, 'SFMono-Regular', Consolas, Menlo, monospace;
+  font-size: 0.78rem;
+  line-height: 1.65;
+  background: rgba(0, 0, 0, 0.22);
+  border-radius: 3px;
+  padding: 0.8rem 1rem;
+  overflow-x: auto;
+  margin-bottom: 0.8rem;
+}
+
+.heal-diff-line { display: block; }
+.heal-diff-line--meta  { color: rgba(244, 232, 193, 0.3); }
+.heal-diff-line--add   { color: rgba(100, 210, 145, 0.85); }
+.heal-diff-line--del   { color: rgba(210, 95, 95, 0.75); }
+.heal-diff-line--ctx   { color: rgba(244, 232, 193, 0.5); }
+
+.heal-footer {
+  font-family: ui-monospace, 'SFMono-Regular', Consolas, Menlo, monospace;
+  font-size: 0.72rem;
+  color: rgba(244, 232, 193, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.heal-footer-pass { color: rgba(100, 210, 145, 0.85); }
+
+.heal-error {
+  font-family: ui-monospace, 'SFMono-Regular', Consolas, Menlo, monospace;
+  font-size: 0.75rem;
+  color: rgba(244, 232, 193, 0.25);
+}
+
+@media (max-width: 640px) {
+  .pipeline-node {
+    padding: 0.6rem 0.7rem;
+    min-width: 62px;
+  }
+  .pn-icon { font-size: 0.95rem; }
+  .pn-label { font-size: 0.5rem; }
+  .ci-meta-row { flex-direction: column; align-items: flex-start; }
+}
+
+/* ═══════════════════════════════════════════ PROJECTS SECTION */
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  text-align: left;
+}
+
+.project-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  background: rgba(51, 30, 56, 0.55);
+  border: 1px solid rgba(244, 232, 193, 0.12);
+  border-radius: 4px;
+  padding: 1.5rem;
+  backdrop-filter: blur(6px);
+  transition: border-color 0.3s ease, transform 0.3s ease;
+}
+
+.project-card:hover {
+  border-color: var(--color-accent);
+  transform: translateY(-4px);
+}
+
+.project-card-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.project-card-title {
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  font-weight: 400;
+  line-height: 1.3;
+  color: var(--color-text);
+}
+
+.project-card-date {
+  font-family: ui-monospace, 'SFMono-Regular', Consolas, Menlo, monospace;
+  font-size: 0.7rem;
+  color: var(--color-accent-soft);
+  white-space: nowrap;
+}
+
+.project-card-desc {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+  flex: 1;
+}
+
+/* ═══════════════════════════════════════════ OPEN SOURCE SECTION */
+
+.oss-intro {
+  text-align: left;
+  max-width: 760px;
+  margin: 0 0 2.5rem;
+}
+
+.oss-inline-link {
+  color: var(--color-accent-soft);
+  border-bottom: 1px solid rgba(112, 160, 175, 0.4);
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+.oss-inline-link:hover {
+  color: var(--color-text);
+  border-color: var(--color-text);
+}
+
+.oss-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  text-align: left;
+}
+
+.oss-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  background: rgba(51, 30, 56, 0.55);
+  border: 1px solid rgba(244, 232, 193, 0.12);
+  border-radius: 4px;
+  padding: 1.5rem;
+  backdrop-filter: blur(6px);
+  transition: border-color 0.3s ease, transform 0.3s ease;
+}
+
+.oss-card:hover {
+  border-color: var(--color-accent);
+  transform: translateY(-4px);
+}
+
+.oss-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.oss-card-repo {
+  font-family: ui-monospace, 'SFMono-Regular', Consolas, Menlo, monospace;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.oss-card-badge {
+  font-family: ui-monospace, 'SFMono-Regular', Consolas, Menlo, monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  color: rgba(100, 210, 145, 0.9);
+  background: rgba(100, 210, 145, 0.1);
+  border: 1px solid rgba(100, 210, 145, 0.3);
+  border-radius: 3px;
+  padding: 0.2rem 0.5rem;
+  white-space: nowrap;
+}
+
+.oss-card-title {
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  font-weight: 400;
+  line-height: 1.35;
+  color: var(--color-text);
+}
+
+.oss-card-desc {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+  flex: 1;
+}
+
+.oss-card-desc a {
+  color: var(--color-accent-soft);
+  border-bottom: 1px solid rgba(112, 160, 175, 0.4);
+}
+
+.oss-card-desc a:hover {
+  color: var(--color-text);
+}
+
+.oss-card-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  font-family: ui-monospace, 'SFMono-Regular', Consolas, Menlo, monospace;
+  font-size: 0.75rem;
+  color: rgba(244, 232, 193, 0.4);
+}
+
+.oss-stat-add { color: rgba(100, 210, 145, 0.85); }
+.oss-stat-del { color: rgba(210, 95, 95, 0.75); }
+
+.oss-card .btn {
+  align-self: flex-start;
+  font-size: 0.78rem;
+  padding: 0.55rem 1.1rem;
 }
