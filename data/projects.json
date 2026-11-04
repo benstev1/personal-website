@@ -5,5 +5,12 @@
     "tags": ["Python", "FastAPI", "GitHub Actions", "Claude API"],
     "github": "https://github.com/benstev1/SH-CI-Pipeline",
     "section": "ci-healer"
+  },
+  {
+    "name": "Min-Crop Stabilizer",
+    "description": "Rust video stabilizer that removes jitter below a percentage-of-frame threshold, keeps pans as intentional motion, and crops only as much as the largest jitter that actually occurred. Includes a CLI, local web app, and Windows desktop build.",
+    "tags": ["Rust", "Phase Correlation", "FFT", "ffmpeg", "Tauri"],
+    "github": "https://github.com/benstev1/minCropIS",
+    "section": "minis"
   }
 ]

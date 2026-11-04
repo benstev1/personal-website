@@ -46,6 +46,7 @@ const SPACEMAN_POSITIONS = {
   home: { left: '50%', top: '45%', rotate: 0 },
   about: { left: '12%', top: '22%', rotate: -25 },
   'ci-healer': { left: '85%', top: '20%', rotate: 15 },
+  minis: { left: '12%', top: '80%', rotate: 18 },
   'open-source': { left: '12%', top: '20%', rotate: -18 },
   projects: { left: '12%', top: '78%', rotate: 20 },
   contact: { left: '85%', top: '75%', rotate: -15 },
@@ -60,7 +61,7 @@ function initSectionTransitions() {
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let spinCount = 0;
 
-  const observer = new IntersectionObserver(entries => {
+  function handleEntries(entries) {
     entries.forEach(entry => {
       const inner = entry.target.querySelector('.section-inner');
 
@@ -88,9 +89,16 @@ function initSectionTransitions() {
       if (spaceman) spaceman.classList.toggle('draggable', entry.target.id === 'home');
       if (inner) inner.classList.add('in-view');
     });
-  }, { threshold: 0.4 });
+  }
 
-  sections.forEach(section => observer.observe(section));
+  // A section taller than 2.5 viewports can never be 40% visible at once, so
+  // it would stay faded out forever. Lower the threshold for those to what
+  // the viewport can actually show of them (the demo section is the tall one).
+  sections.forEach(section => {
+    const maxRatio = window.innerHeight / Math.max(section.offsetHeight, 1);
+    const threshold = Math.min(0.4, maxRatio * 0.8);
+    new IntersectionObserver(handleEntries, { threshold }).observe(section);
+  });
 }
 
 // Let the user click-and-drag the spaceman around while the home section is

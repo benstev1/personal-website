@@ -29,6 +29,10 @@
         <span class="nav-btn-label">CI Healer</span>
         <span class="nav-btn-ext">healer.py</span>
       </a>
+      <a href="#minis" class="nav-btn magnetic">
+        <span class="nav-btn-label">Stabilizer</span>
+        <span class="nav-btn-ext">minis.rs</span>
+      </a>
       <a href="#open-source" class="nav-btn magnetic">
         <span class="nav-btn-label">Open Source</span>
         <span class="nav-btn-ext">sylt.id3</span>
@@ -176,6 +180,120 @@
           </div>
         </div>
 
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════ MIN-CROP STABILIZER SECTION -->
+    <section class="page-section" id="minis">
+      <div class="section-inner section-inner--wide">
+        <p class="section-eyebrow">Latest Project</p>
+        <h2 class="section-title">Min&#8209;Crop Stabilizer</h2>
+
+        <div class="ci-intro">
+          <p class="ci-body">
+            A video stabilizer, written in Rust, that crops as little as it can.
+            You set a jitter threshold as a percentage of the frame: motion inside it
+            is removed, motion that stays past it (pans, tilts) is kept as intentional.
+            The fixed crop is sized to the largest jitter that actually occurred, not to
+            the threshold. Camera motion comes from phase correlation over image tiles,
+            and it runs as a CLI, a local web app, and a Windows desktop build.
+          </p>
+          <div class="ci-meta-row">
+            <div class="project-tags">
+              <span class="tag">Rust</span>
+              <span class="tag">Phase Correlation</span>
+              <span class="tag">FFT</span>
+              <span class="tag">ffmpeg</span>
+              <span class="tag">Tauri</span>
+            </div>
+            <a class="btn btn-line magnetic ci-github-btn"
+               href="https://github.com/benstev1/minCropIS"
+               target="_blank" rel="noopener">GitHub ↗</a>
+          </div>
+        </div>
+
+        <!-- Live demo: see js/stabilizer.js -->
+        <div class="mc-demo" id="mcDemo">
+          <div class="mc-demo-header">
+            <span class="mc-demo-eyebrow">// live demo</span>
+            <span class="mc-demo-meta">generated clip · runs in your browser</span>
+          </div>
+
+          <div class="mc-controls">
+            <div class="mc-control">
+              <span class="mc-control-label">Clip</span>
+              <div class="mc-seg" role="group" aria-label="Clip">
+                <button type="button" class="mc-seg-btn is-active" data-scenario="shake" aria-pressed="true">Shake</button>
+                <button type="button" class="mc-seg-btn" data-scenario="pan" aria-pressed="false">Shake + pan</button>
+                <button type="button" class="mc-seg-btn" data-scenario="bump" aria-pressed="false">Shake + bumps</button>
+              </div>
+            </div>
+            <div class="mc-control mc-control--threshold">
+              <label class="mc-control-label" for="mcThreshold">Jitter threshold</label>
+              <input type="range" id="mcThreshold" min="1" max="5" step="0.25" value="2" />
+              <output id="mcThresholdOut" for="mcThreshold">2.0%</output>
+            </div>
+          </div>
+
+          <div class="mc-views">
+            <figure class="mc-view">
+              <canvas id="mcInput" width="640" height="360" role="img"
+                      aria-label="Shaky input frame with the crop outlines overlaid"></canvas>
+              <figcaption>
+                <span>Input</span>
+                <span class="mc-key"><i class="mc-key-swatch mc-key-swatch--crop"></i>crop used</span>
+                <span class="mc-key"><i class="mc-key-swatch mc-key-swatch--thr"></i>threshold-sized crop</span>
+              </figcaption>
+            </figure>
+            <figure class="mc-view">
+              <canvas id="mcOutput" width="640" height="360" role="img"
+                      aria-label="Stabilized output frame at its cropped size"></canvas>
+              <figcaption>
+                <span>Stabilized output</span>
+                <span class="mc-key">shown 1:1, border = cropped away</span>
+              </figcaption>
+            </figure>
+          </div>
+
+          <div class="mc-chart-block">
+            <div class="mc-chart-head">
+              <div class="mc-seg" role="group" aria-label="Axis">
+                <button type="button" class="mc-seg-btn is-active" data-axis="x" aria-pressed="true">Horizontal</button>
+                <button type="button" class="mc-seg-btn" data-axis="y" aria-pressed="false">Vertical</button>
+              </div>
+              <div class="mc-legend">
+                <span class="mc-key"><i class="mc-key-line mc-key-line--raw"></i>camera path</span>
+                <span class="mc-key"><i class="mc-key-line mc-key-line--out"></i>stabilized path</span>
+                <span class="mc-key"><i class="mc-key-band"></i>threshold band</span>
+              </div>
+            </div>
+            <canvas id="mcChart" class="mc-chart" role="img"
+                    aria-label="Chart of the camera path over time against the stabilized path, with per-frame jitter, bump and intentional labels"></canvas>
+            <div class="mc-playbar">
+              <button type="button" class="btn btn-line mc-play" id="mcPlay" aria-pressed="true">Pause</button>
+              <input type="range" id="mcScrub" min="0" max="239" step="1" value="0" aria-label="Scrub through the clip" />
+              <span class="mc-time" id="mcTime">0.0s / 8.0s</span>
+            </div>
+          </div>
+
+          <dl class="mc-stats">
+            <div><dt>Threshold</dt><dd id="mcStatThreshold"></dd></div>
+            <div><dt>Crop actually used</dt><dd id="mcStatCrop"></dd></div>
+            <div><dt>Output size</dt><dd id="mcStatOutput"></dd></div>
+            <div><dt>Frame kept</dt><dd id="mcStatKept"></dd></div>
+            <div><dt>Frame labels</dt><dd id="mcStatFrames"></dd></div>
+          </dl>
+
+          <p class="mc-note">
+            The camera path here is generated, so the demo skips the phase-correlation
+            tracking and runs the jitter/intent split and crop sizing from the project's
+            design doc. On the shake-only clip, raise the threshold: the crop stays at the
+            largest jitter that actually happened while a threshold-sized crop keeps eating
+            the frame. Pans and bumps push the correction up to the threshold, so there the
+            crop is capped at it and never goes past (give or take a pixel of rounding to
+            even dimensions).
+          </p>
+        </div>
       </div>
     </section>
 
@@ -332,5 +450,6 @@
   </main>
 
   <script src="js/main.js"></script>
+  <script src="js/stabilizer.js"></script>
 </body>
 </html>
